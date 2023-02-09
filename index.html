@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>My test page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
     <link href="styles/style.css" rel="stylesheet" type="text/css">
   </head>
@@ -19,8 +20,80 @@
       <li>builders</li>
     </ul>
 
-    <p>working together to keep the Museum inducstry alive and accessible, so people worldwide can be informed contributors and creators of the Web. We believe this act of human collaboration across an open platform is essential to individual growth and our collective future.</p>
+    <div class="container mt-3">
+      <table class="table table-dark"> <!-- <th id="th2" style="width: 20px">About</th> -->
+        <thead>
+          <th>Name</th>
+          <th>About</th>
+        </thead>
+        <tbody id="tbody1"></tbody>
+      </table>  
+    </div>
 
-    <p>Read the <a href="https://www.mozilla.org/en-US/about/manifesto/">Mozilla Manifesto</a> to learn even more about the values and principles that guide the pursuit of our mission.</p>
+    <script type = "module">
+      var tbody = document.getElementById('tbody1');
+      
+      function AddItemToTable(name,about){ // Adds 1 record to the
+        let trow = document.createElement('trow');
+        let td1 = document.createElement('td');
+        let td2 = document.createElement('td');
+
+        td1.innerHTML = name;
+        td2.innerHTML = about;
+
+        trow.appendChild(td1);
+        trow.appendChild(td2);
+        tbody.appendChild(trow);
+      }
+
+      function AddAllItemsToTable(Users){
+        tbody.innerHTML="";
+        Users.forEach(element => {
+          AddItemToTable(element.User_Name, element.About);
+        });
+      }
+    /* ----------------------IMPORTS--------------------------------------*/
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyDvhYkWi5HbdF2S-jIvLjAhMtu9-_0ZVUE",
+        authDomain: "interactive-timeline-project.firebaseapp.com",
+        projectId: "interactive-timeline-project",
+        storageBucket: "interactive-timeline-project.appspot.com",
+        messagingSenderId: "620729376001",
+        appId: "1:620729376001:web:8ef29363c77cdf2df98f00",
+        measurementId: "G-NPP87152G8"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      import {
+        getFirestore, doc, getDoc, getDocs, onSnapshot, collection
+      }
+      from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+      
+      const db = getFirestore()
+
+      async function GetAllDataOnce() {
+        const querySnapshot = await getDocs(collection(db,"Users"))
+        var users = [];
+
+        querySnapshot.forEach(doc => {
+          users.push(doc.data());
+        });
+
+        AddAllItemsToTable(users);       
+      }
+
+      window.onload = GetAllDataOnce;
+    </script>
+
   </body>
 </html>
